@@ -1,8 +1,13 @@
 package control;
 
-import java.time.LocalDate;
+import com.sun.source.tree.Tree;
 
-public class Citizen  implements Comparable<Citizen> {
+import java.io.*;
+import java.time.LocalDate;
+import java.util.Set;
+import java.util.TreeSet;
+
+public class Citizen  implements Comparable<Citizen>, Serializable {
     private String fullName;
     private String passport;
     private String iNN;
@@ -10,6 +15,21 @@ public class Citizen  implements Comparable<Citizen> {
     private boolean isMilitary;
     private boolean isQuarantine;
     private VoteDistrict voteDistrict;
+    private static Set<VoteDistrict> citizenSet = new TreeSet<>();
+
+
+    static {
+        try {
+            File f = new File(VoteDistrict.data);
+            if(f.exists() && !f.isDirectory()) {
+                ObjectInputStream in = new ObjectInputStream(new FileInputStream(VoteDistrict.data));
+                citizenSet = (TreeSet<VoteDistrict>)in.readObject();
+                System.out.println(citizenSet);
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public Citizen(String fullName, String passport, String iNN, LocalDate birthday, boolean isMilitary, boolean isQuarantine) throws InnException {
